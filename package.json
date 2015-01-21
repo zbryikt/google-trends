@@ -1,0 +1,23 @@
+{
+  "author": "Kirby Wu",
+  "name": "google-trends",
+  "description": "Fetch latest google trends score for every given keyword",
+  "version": "0.0.1",
+  "homepage": "https://github.com/zbryikt/google-trends",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/zbryikt/google-trends"
+  },
+  "engines": {
+    "node": ">=0.8.18",
+    "npm": ">=1.2.2"
+  },
+  "dependencies": {
+    "bluebird": "=2.8.0",
+    "request": "=2.51.0",
+    "tough-cookie": "=0.12.1"
+  },
+  "devDependencies": {
+    "LiveScript": ">=1.2.0",
+  }
+}
