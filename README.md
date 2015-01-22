@@ -19,8 +19,8 @@ Then
 
     trends = require("google-trends");
     trends.init();
-    trends.get("obama"); // will return {keyword: 'obama', value: 8}
-    trends.getAll(["obama","putin"]); // return {obama: 8, putin:27}
+    trends.get("ladygaga"); // will return {"ladygaga": 5}
+    trends.getAll(["justin","obama","putin"]); // return {"justin": 20, "obama": 7, "putin": 1.25}
 
 
 License
