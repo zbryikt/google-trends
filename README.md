@@ -40,6 +40,10 @@ Then
     trends.related(["obama","putin"]).then(function(hash) { ... });  
     // hash = {"obama": {"barack obama": 100, "michelle obama": 40 ... }, "putin": {...}}
 
+    // Get related keywords recursively
+    trends.recursiveRelated(["obama"]).then(function(hash) { ... });  
+    // hash = {"barack obama": 100, "michelle obama": 40 ... }
+
 
 License
 ---------------------

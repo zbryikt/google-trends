@@ -90,7 +90,7 @@ trend = {
       }
     })['catch'](rej);
   },
-  recurse: function(keyword, depth){
+  recursiveRelated: function(keyword, depth){
     var this$ = this;
     depth == null && (depth = 1);
     return new bluebird(function(res, rej){

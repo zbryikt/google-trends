@@ -46,7 +46,7 @@ trend = do
       else => @_recurse new-keyword, hash, depth, lv + 1, used-keyword, res, rej
     .catch rej
 
-  recurse: (keyword, depth = 1) ->
+  recursive-related: (keyword, depth = 1) ->
     (res, rej) <~ new bluebird _
     @_recurse keyword, {}, depth, 0, [], res, rej
 
