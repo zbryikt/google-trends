@@ -1,4 +1,4 @@
-require! <[request fs bluebird]>
+require! <[request fs bluebird cheerio]>
 
 trend = do
   # callback: {keyword, value}
@@ -7,6 +7,33 @@ trend = do
     ret = /-H 'cookie: ([^']+)'/.exec data
     if !ret => @config = {}
     else => @config = {cookie: ret.1}
+
+  _related: (keywords, hash, res, rej) ->
+    if keywords.length == 0 => return res hash
+    keyword = keywords.splice 0,1 .0
+    @related keyword .then (h) ~> 
+      hash[keyword] = h
+      @_related keywords, hash, res, rej
+    .catch rej
+  related: (keyword) ->
+    if typeof(keyword) == "object" and keyword.length => 
+      return new bluebird (res, rej) ~> @_related keyword, {}, res, rej
+    if !@config => @init!
+    (res, rej) <~ new bluebird _
+    (e,r,b) <~ request {
+      url: "http://www.google.com.tw/trends/trendsReport?hl=zh-TW&q=#{encodeURIComponent(keyword)}&cmpt=q&tz=&tz=&content=1"
+      method: \GET
+      headers: @config
+    }, _
+    if e or !b => return rej null
+    $ = cheerio.load b
+    ret = {}
+    for row in $('#TOP_QUERIES_0_0table .trends-table-row')
+      name = $(row).find(".trends-bar-chart-name a:first-child").text!trim!
+      value = $(row).find(".trends-hbars-value").text!trim!
+      ret[name] = value
+    return res ret
+
 
   get: (keywords) ->
     length = 1
@@ -92,70 +119,6 @@ trend = do
 
   getAll: (list, pivot = null, hash = {}) -> 
     new bluebird (res, rej) ~> @_getAll list, pivot, hash, res, rej
-
-  /*
-  _getAll: (pivot, list, hash, res, rej) ->
-    if list.length == 0 => return res hash
-    tag = list.splice 0,1 .0
-    @get [pivot,tag] .then (map) ~> 
-      if map[pivot] and isFinite(map[pivot]) => @merge hash, map
-      @_getAll pivot, list, hash, res, rej
-    .catch rej
-
-  getAll: (list, pivot = null, hash = {}) ->
-    _getAllPromisea [k for k in list], pivot, hash
-    .then (hash) ~> 
-      if [k for k of hash].length == list.length => #done
-      for k in list => if !(k of hash) =>
-  */      
-
-  /*
-  updateHash: (hash, map) ->
-    order = [k for k of map]map(->[it, map[it]]).sort((a,b)-> a.1 - b.1)
-    if !order.length => return
-    [mk, mv] = order.0
-    if !hash[mk] => hash[mk] = 1
-    for [k,v] in order =>
-      if !hash[k] => hash[k] = (v / mv) * hash[mk]
-
-  _getPivot: (pivot, list, hash, res, rej) ->
-    if !pivot and !(list and list.length) => return rej!
-    if !pivot => 
-      pivot = list.splice 0,1 .0
-      hash[pivot] = 1
-    if list.length == 0 => return res {pivot,hash}
-    tag = list.splice 0,1 .0
-    @get [pivot,tag] .then (mapper) ~>
-      if mapper[pivot] > mapper[tag] =>
-        if mapper[tag] > 0 and hash[pivot] > 0 =>
-          rate = mapper[pivot] / mapper[tag]
-          for item of hash => hash[item] = hash[item] * rate
-        pivot := tag
-        hash[pivot] = 1
-      else if mapper[pivot] > 0 and mapper[tag] > 0 =>
-        hash[tag] = mapper[tag] / mapper[pivot]
-      @_getPivot pivot, list, hash, res, rej
-    .catch rej
-
-  getPivot: (list) -> new bluebird (res, rej) ~> @_getPivot null, list, {}, res, rej
-
-  _getAll: (pivot, list, hash, res, rej) ->
-    if list.length == 0 => return res hash
-    tag = list.splice 0,1 .0
-    @get [pivot,tag] .then (mapper) ~> 
-      if !hash[pivot] => hash[pivot] = mapper[pivot]
-      hash[tag] = mapper[tag] * hash[pivot] / mapper[pivot]
-      @_getAll pivot, list, hash, res, rej
-    .catch rej
-
-  getAll: (list) -> 
-    (res, rej) <~ new bluebird _
-    ({pivot, hash}) <~ @getPivot [k for k in list] .then
-    if list.length == 1 => return res hash
-    remains = []
-    for key in list => if !(key of hash) => remains.push key
-    @_getAll pivot, remains, hash, res, rej
-  */
 
   _align: (v, len, float = false,char=" ") -> 
     s = "#v"

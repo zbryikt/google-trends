@@ -19,9 +19,26 @@ Then
 
     trends = require("google-trends");
     trends.init();
-    trends.get("ladygaga"); // will return {"ladygaga": 5}
-    trends.getAll(["justin","obama","putin"]); // return {"justin": 20, "obama": 7, "putin": 1.25}
-    trends.format(["justin","obama","putin"]); // space-aligned output to stdout
+
+    // Get current trend of ladygaga
+    trends.get("ladygaga").then(function(hash) { ... });
+    // hash = {"ladygaga": 5}
+
+    // Get current trends of a set of keywords (normalized)
+    trends.getAll(["justin","obama","putin"]).then(function(hash) { ...});
+    // hash = {"justin": 20, "obama": 7, "putin": 1.25}
+
+    // Formated getAll result in stdout
+    trends.format(["justin","obama","putin"]);
+    // space-aligned output to stdout
+
+    // Get related keyword
+    trends.related("obama").then(function(hash) { ... });
+    // hash = {"barack obama": 100, "michelle obama": 40 ... }
+
+    // Get related keywords
+    trends.related(["obama","putin"]).then(function(hash) { ... });  
+    // hash = {"obama": {"barack obama": 100, "michelle obama": 40 ... }, "putin": {...}}
 
 
 License
