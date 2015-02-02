@@ -55,11 +55,46 @@ trend = {
         for (i$ = 0, len$ = (ref$ = $('#TOP_QUERIES_0_0table .trends-table-row')).length; i$ < len$; ++i$) {
           row = ref$[i$];
           name = $(row).find(".trends-bar-chart-name a:first-child").text().trim();
-          value = $(row).find(".trends-hbars-value").text().trim();
+          value = parseInt($(row).find(".trends-hbars-value").text().trim());
           ret[name] = value;
         }
         return res(ret);
       });
+    });
+  },
+  _recurse: function(keyword, hash, depth, lv, usedKeyword, res, rej){
+    var this$ = this;
+    return this.related(keyword).then(function(newHash){
+      var list, k, newKeyword;
+      usedKeyword.push(keyword);
+      import$(hash, newHash);
+      list = (function(){
+        var results$ = [];
+        for (k in hash) {
+          results$.push(k);
+        }
+        return results$;
+      }()).sort(function(a, b){
+        return hash[b] - hash[a];
+      });
+      while (list.length) {
+        newKeyword = list.splice(0, 1)[0];
+        if (usedKeyword.indexOf(newKeyword) === -1) {
+          break;
+        }
+      }
+      if (usedKeyword.indexOf(newKeyword) >= 0 || lv >= depth) {
+        return res(hash);
+      } else {
+        return this$._recurse(newKeyword, hash, depth, lv + 1, usedKeyword, res, rej);
+      }
+    })['catch'](rej);
+  },
+  recurse: function(keyword, depth){
+    var this$ = this;
+    depth == null && (depth = 1);
+    return new bluebird(function(res, rej){
+      return this$._recurse(keyword, {}, depth, 0, [], res, rej);
     });
   },
   get: function(keywords){
@@ -264,6 +299,11 @@ trend = {
   }
 };
 module.exports = trend;
+function import$(obj, src){
+  var own = {}.hasOwnProperty;
+  for (var key in src) if (own.call(src, key)) obj[key] = src[key];
+  return obj;
+}
 function repeatString$(str, n){
   for (var r = ''; n > 0; (n >>= 1) && (str += str)) if (n & 1) r += str;
   return r;

@@ -30,10 +30,25 @@ trend = do
     ret = {}
     for row in $('#TOP_QUERIES_0_0table .trends-table-row')
       name = $(row).find(".trends-bar-chart-name a:first-child").text!trim!
-      value = $(row).find(".trends-hbars-value").text!trim!
+      value = parseInt($(row).find(".trends-hbars-value").text!trim!)
       ret[name] = value
     return res ret
 
+  _recurse: (keyword, hash, depth, lv, used-keyword, res, rej) ->
+    @related keyword .then (new-hash) ~> 
+      used-keyword.push keyword
+      hash <<< new-hash
+      list = [k for k of hash]sort((a,b) -> hash[b] - hash[a])
+      while list.length
+        new-keyword = list.splice(0,1) .0
+        if used-keyword.indexOf(new-keyword)==-1 => break
+      if used-keyword.indexOf(new-keyword)>=0 or lv >= depth => return res hash
+      else => @_recurse new-keyword, hash, depth, lv + 1, used-keyword, res, rej
+    .catch rej
+
+  recurse: (keyword, depth = 1) ->
+    (res, rej) <~ new bluebird _
+    @_recurse keyword, {}, depth, 0, [], res, rej
 
   get: (keywords) ->
     length = 1
