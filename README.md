@@ -21,6 +21,7 @@ Then
     trends.init();
     trends.get("ladygaga"); // will return {"ladygaga": 5}
     trends.getAll(["justin","obama","putin"]); // return {"justin": 20, "obama": 7, "putin": 1.25}
+    trends.format(["justin","obama","putin"]); // space-aligned output to stdout
 
 
 License

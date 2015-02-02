@@ -34,7 +34,7 @@ trend = {
         method: 'GET',
         headers: this$.config
       }, function(e, r, b){
-        var mat, ret, keywords, values, ref$, i$, len$, i, k;
+        var mat, ret, keywords, choose, ref$, values, i$, len$, i, k;
         if (e || !b) {
           return rej(null);
         }
@@ -43,11 +43,16 @@ trend = {
           b = mat[1];
           ret = {};
           b = b.replace(/new Date\((\d+),(\d+),(\d+)\)/g, '"$1/$2/$3"');
+          b = b.replace(/,,/g, ',');
           b = JSON.parse(b);
           keywords = b.table.cols.map(function(it){
             return it.label;
           }).splice(1);
-          values = (ref$ = b.table.rows)[ref$.length - 1].c.map(function(it){
+          choose = 1;
+          if ((ref$ = b.table.rows)[ref$.length - 1].c[1].v === null) {
+            choose = 2;
+          }
+          values = (ref$ = b.table.rows)[ref$.length - choose].c.map(function(it){
             return it.v;
           }).splice(1);
           for (i$ = 0, len$ = keywords.length; i$ < len$; ++i$) {

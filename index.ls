@@ -26,9 +26,15 @@ trend = do
       b = mat.1
       ret = {}
       b = b.replace(/new Date\((\d+),(\d+),(\d+)\)/g,'"$1/$2/$3"')
+      # sometimes we got ...},,{... data which is not valid json!
+      b = b.replace(/,,/g,',')
       b = JSON.parse(b)
       keywords = b.table.cols.map(->it.label).splice(1)
-      values =  b.table.rows[* - 1].c.map(->it.v).splice(1)
+      choose = 1
+      # sometimes latest data is not available but there is an entry for it with null as value...
+      # in this case, use n - 2 instead of n - 1
+      if b.table.rows[* - 1].c.1.v == null => choose = 2
+      values =  b.table.rows[* - choose].c.map(->it.v).splice(1)
       for k,i in keywords => ret[k] = values[i]
     else => ret = {}
 
