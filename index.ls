@@ -42,7 +42,6 @@ trend = do
       while list.length
         new-keyword = list.splice(0,1) .0
         if used-keyword.indexOf(new-keyword)==-1 => break
-      console.log ">>> used: ", used-keyword, " / new: ", new-keyword
       if used-keyword.indexOf(new-keyword)>=0 or lv >= depth => return res hash
       else => @_recurse new-keyword, hash, depth, lv + 1, used-keyword, res, rej
     .catch rej

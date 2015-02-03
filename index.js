@@ -83,7 +83,6 @@ trend = {
           break;
         }
       }
-      console.log(">>> used: ", usedKeyword, " / new: ", newKeyword);
       if (usedKeyword.indexOf(newKeyword) >= 0 || lv >= depth) {
         return res(hash);
       } else {
