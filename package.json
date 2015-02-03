@@ -15,7 +15,8 @@
   "dependencies": {
     "bluebird": "=2.8.0",
     "request": "=2.51.0",
-    "tough-cookie": "=0.12.1"
+    "tough-cookie": "=0.12.1",
+    "minimist": "=1.1.0"
   },
   "devDependencies": {
     "LiveScript": ">=1.2.0"

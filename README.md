@@ -45,6 +45,16 @@ Then
     // hash = {"barack obama": 100, "michelle obama": 40 ... }
 
 
+Command Line Tools
+---------------------
+
+a script 'google-trend' is provided for easy access to google trends via command line, without scripting. usage:
+
+    google-trend -- <action> [options...]
+    available actions:
+      related <keyword> [-d depth]
+      get <keyword> [keywords...]
+
 License
 ---------------------
 

@@ -42,13 +42,14 @@ trend = do
       while list.length
         new-keyword = list.splice(0,1) .0
         if used-keyword.indexOf(new-keyword)==-1 => break
+      console.log ">>> used: ", used-keyword, " / new: ", new-keyword
       if used-keyword.indexOf(new-keyword)>=0 or lv >= depth => return res hash
       else => @_recurse new-keyword, hash, depth, lv + 1, used-keyword, res, rej
     .catch rej
 
   recursive-related: (keyword, depth = 1) ->
     (res, rej) <~ new bluebird _
-    @_recurse keyword, {}, depth, 0, [], res, rej
+    @_recurse keyword, {}, depth, 1, [], res, rej
 
   get: (keywords) ->
     length = 1
@@ -141,10 +142,12 @@ trend = do
     if !float or slen<0 => slen = s.length
     "#char" * (len - slen) + "#v"
 
+  _format: (hash) ->
+    keys = [k for k of hash].sort((a,b)-> hash[b] - hash[a])
+    len = Math.max.apply null, keys.map(-> it.length)
+    for k in keys => console.log @_align(k, len + 2), @_align(parseInt(hash[k]*100)/100, 6, true)
+
   format: (list) ->
-    @getAll list .then (hash) ~> 
-      keys = [k for k of hash].sort((a,b)-> hash[b] - hash[a])
-      len = Math.max.apply null, keys.map(-> it.length)
-      for k in keys => console.log @_align(k, len + 2), @_align(parseInt(hash[k]*100)/100, 6, true)
+    @getAll list .then (hash) ~> @_format hash
 
 module.exports = trend

@@ -1,0 +1,30 @@
+#!/usr/bin/env lsc
+require! <[minimist ./index]>
+argv = require(\minimist) process.argv.slice 2
+
+action = argv._.0
+
+help = ->
+  console.log "usage: google-trend -- <action> [options...]"
+  console.log "available actions:"
+  console.log "  related <keyword> [-d depth]"
+  console.log "  get <keyword> [keywords...]"
+
+switch action
+| undefined => help!
+| \get =>
+  if argv._.length < 2 => 
+    console.log "usage: google-trend -- get <keyword> [keywords...]"
+  else
+    argv._.splice 0,1
+    index.format argv._
+| \related => 
+  if argv._.length < 2 =>
+    console.log "usage: google-trend -- related <keyword> [-d depth]"
+  else
+    keyword = argv._.1
+    if argv.d => depth = parseInt(argv.d)
+    if isNaN(depth) => depth = 1
+    index.recursiveRelated(keyword, depth).then (hash) ->
+      index._format hash
+

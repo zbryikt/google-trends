@@ -83,6 +83,7 @@ trend = {
           break;
         }
       }
+      console.log(">>> used: ", usedKeyword, " / new: ", newKeyword);
       if (usedKeyword.indexOf(newKeyword) >= 0 || lv >= depth) {
         return res(hash);
       } else {
@@ -94,7 +95,7 @@ trend = {
     var this$ = this;
     depth == null && (depth = 1);
     return new bluebird(function(res, rej){
-      return this$._recurse(keyword, {}, depth, 0, [], res, rej);
+      return this$._recurse(keyword, {}, depth, 1, [], res, rej);
     });
   },
   get: function(keywords){
@@ -274,27 +275,30 @@ trend = {
     }
     return repeatString$(char + "", len - slen) + (v + "");
   },
+  _format: function(hash){
+    var keys, k, len, i$, len$, results$ = [];
+    keys = (function(){
+      var results$ = [];
+      for (k in hash) {
+        results$.push(k);
+      }
+      return results$;
+    }()).sort(function(a, b){
+      return hash[b] - hash[a];
+    });
+    len = Math.max.apply(null, keys.map(function(it){
+      return it.length;
+    }));
+    for (i$ = 0, len$ = keys.length; i$ < len$; ++i$) {
+      k = keys[i$];
+      results$.push(console.log(this._align(k, len + 2), this._align(parseInt(hash[k] * 100) / 100, 6, true)));
+    }
+    return results$;
+  },
   format: function(list){
     var this$ = this;
     return this.getAll(list).then(function(hash){
-      var keys, k, len, i$, len$, results$ = [];
-      keys = (function(){
-        var results$ = [];
-        for (k in hash) {
-          results$.push(k);
-        }
-        return results$;
-      }()).sort(function(a, b){
-        return hash[b] - hash[a];
-      });
-      len = Math.max.apply(null, keys.map(function(it){
-        return it.length;
-      }));
-      for (i$ = 0, len$ = keys.length; i$ < len$; ++i$) {
-        k = keys[i$];
-        results$.push(console.log(this$._align(k, len + 2), this$._align(parseInt(hash[k] * 100) / 100, 6, true)));
-      }
-      return results$;
+      return this$._format(hash);
     });
   }
 };
