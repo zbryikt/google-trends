@@ -75,7 +75,10 @@ trend = do
       choose = 1
       # sometimes latest data is not available but there is an entry for it with null as value...
       # in this case, use n - 2 instead of n - 1
-      if b.table.rows[* - 1].c.1.v == null => choose = 2
+      # if b.table.rows[* - 1].c.1.v == null => choose = 2
+      # it seems that the availability of latest data between keywords are not synchronized.
+      # always use n - 2 instead of n - 1
+      choose = 2
       values =  b.table.rows[* - choose].c.map(->it.v).splice(1)
       for k,i in keywords => ret[k] = values[i]
     else => ret = {}

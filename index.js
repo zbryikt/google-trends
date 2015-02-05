@@ -113,7 +113,7 @@ trend = {
         method: 'GET',
         headers: this$.config
       }, function(e, r, b){
-        var mat, ret, keywords, choose, ref$, values, i$, len$, i, k;
+        var mat, ret, keywords, choose, values, ref$, i$, len$, i, k;
         if (e || !b) {
           return rej(null);
         }
@@ -128,9 +128,7 @@ trend = {
             return it.label;
           }).splice(1);
           choose = 1;
-          if ((ref$ = b.table.rows)[ref$.length - 1].c[1].v === null) {
-            choose = 2;
-          }
+          choose = 2;
           values = (ref$ = b.table.rows)[ref$.length - choose].c.map(function(it){
             return it.v;
           }).splice(1);
