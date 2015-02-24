@@ -124,6 +124,9 @@ trend = {
           b = b.replace(/new Date\((\d+),(\d+),(\d+)\)/g, '"$1/$2/$3"');
           b = b.replace(/,,/g, ',');
           b = JSON.parse(b);
+          if (b.status === 'error') {
+            return res(ret);
+          }
           keywords = b.table.cols.map(function(it){
             return it.label;
           }).splice(1);

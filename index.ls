@@ -71,6 +71,7 @@ trend = do
       # sometimes we got ...},,{... data which is not valid json!
       b = b.replace(/,,/g,',')
       b = JSON.parse(b)
+      if b.status == 'error' => return res ret
       keywords = b.table.cols.map(->it.label).splice(1)
       choose = 1
       # sometimes latest data is not available but there is an entry for it with null as value...
