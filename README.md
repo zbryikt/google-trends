@@ -58,4 +58,4 @@ a script 'google-trend' is provided for easy access to google trends via command
 License
 ---------------------
 
-CC-BY 4.0: https://creativecommons.org/licenses/by/4.0/
+MIT License
